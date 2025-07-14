@@ -2,19 +2,19 @@
 
 A sophisticated Python-based monitoring system for tracking new product listings on Mercari.jp with instant Telegram notifications, anti-bot detection bypass, and intelligent image filtering.
 
-## 🚀 Features
+## Features
 
-- **🔍 Real-time Monitoring**: Tracks new Mercari listings based on configurable search queries
-- **🤖 Anti-Bot Protection**: Uses undetected-chromedriver and human-like behavior patterns
-- **📱 Instant Notifications**: Telegram bot with formatted messages and product images
-- **💱 Automatic Currency Conversion**: Real-time JPY to EUR conversion using live exchange rates
-- **🗃️ Persistent State**: JSON-based storage to prevent duplicate notifications
-- **🎨 Optional Image Filtering**: Background quality filtering using Pillow
-- **🔧 Configurable**: All settings via JSON config and .env environment variables
-- **📊 Structured Logging**: JSON logs with rotation and debugging screenshots
-- **🔒 Secure**: Secrets managed via .env file
+- Real-time Monitoring: Tracks new Mercari listings based on configurable search queries
+- Anti-Bot Protection: Uses undetected-chromedriver and human-like behavior patterns
+- Instant Notifications: Telegram bot with formatted messages and product images
+- Automatic Currency Conversion: Real-time JPY to EUR conversion using live exchange rates
+- Persistent State: JSON-based storage to prevent duplicate notifications
+- Optional Image Filtering: Background quality filtering using Pillow
+- Configurable: All settings via JSON config and .env environment variables
+- Structured Logging: JSON logs with rotation and debugging screenshots
+- Secure: Secrets managed via .env file
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 mercari_monitor/
@@ -33,7 +33,7 @@ mercari_monitor/
 └── screenshots/                # Debug screenshots on error
 ```
 
-## 🛠️ Installation
+## Installation
 
 ### 1. Setup Project
 ```bash
@@ -74,7 +74,7 @@ Sony WH-1000XM5
 Nintendo Switch OLED
 ```
 
-## 🎯 Usage
+## Usage
 
 ### Basic Usage
 ```bash
@@ -92,7 +92,7 @@ python main.py --config custom_config.json --interval 10
 - **Ctrl+C**: Gracefully shutdown monitoring
 - **Ctrl+Z**: Emergency stop (may leave processes running)
 
-## ⚙️ Configuration
+## Configuration
 
 ### Key Settings in config.json
 
@@ -130,7 +130,7 @@ When Mercari changes layout, update selectors without code changes:
 }
 ```
 
-## 🔧 Advanced Features
+## Advanced Features
 
 ### Image Filtering
 Enable smart background filtering:
@@ -152,7 +152,7 @@ tail -f logs/mercari_monitor.json
 jq . logs/mercari_monitor.json  # Pretty print
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -179,7 +179,7 @@ Error screenshots saved to `screenshots/` folder:
 - Includes current page state
 - Useful for diagnosing layout changes
 
-## 📝 Monitoring Stats
+## Monitoring Stats
 
 Access product storage statistics:
 
@@ -199,7 +199,7 @@ Example output:
 }
 ```
 
-## 🔄 Maintenance
+## Maintenance
 
 ### CSS Selector Updates
 1. Use browser dev tools (F12)
@@ -214,11 +214,11 @@ Logs auto-rotate at 10MB with 5 backup files old
 Old products cleaned automatically every 7 days
 Manual cleanup: `storage.cleanup_old_products()`
 
-## 📊 Example Notifications
+## Example Notifications
 
 ### Single Product
 ```
-🚀 New Product Found
+New Product Found
 
 **Nintendo Switch OLED - White**
 ¥32,800 (~€211.61)
@@ -230,7 +230,7 @@ _Query: Nintendo Switch_
 
 ### Batch Notification
 ```
-🎯 3 New Products Found
+3 New Products Found
 
 _Query: iPhone 14_
 
@@ -244,24 +244,6 @@ _Query: iPhone 14_
 ... and 1 more products
 ```
 
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch
-3. Test with real Mercari data
-4. Update documentation
-5. Submit pull request
-
-## 📄 License
+## License
 
 This project is educational software. Users are responsible for complying with Mercari terms of service and local laws.
-
-## 🎉 Support
-
-- Issues: Create GitHub issue with logs
-- Questions: Use GitHub discussions
-- Bugs: Include screenshots and `config.json`
-
----
-
-**Happy monitoring!** 🎯
