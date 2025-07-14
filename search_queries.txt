@@ -1,0 +1,31 @@
+# Mercari search queries
+# Lines starting with # are comments
+# Empty lines are ignored
+
+# Electronics
+"iPhone 12"
+"iPhone 13"
+"iPhone 14"
+"MacBook Air"
+"MacBook Pro"
+"AirPods Pro"
+"iPad Pro"
+
+# Gaming
+"Nintendo Switch"
+"PlayStation 5"
+"PlayStation 4"
+"Xbox Series X"
+"Xbox Series S"
+"Nintendo Switch Lite"
+
+# Tech
+"Sony WH-1000XM5"
+"Canon EOS R5"
+"Sony A7 IV"
+"DJI Mini 3"
+"Bose QuietComfort"
+
+# Home
+"Nespresso machine"
+"Roomba vacuum"

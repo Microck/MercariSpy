@@ -1,0 +1,61 @@
+{
+  "browser": {
+    "headless": false,
+    "window_size": [1920, 1080],
+    "page_load_timeout": 30,
+    "implicit_wait": 10,
+    "chrome_options": [
+      "--no-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-blink-features=AutomationControlled"
+    ]
+  },
+  
+  "selectors": {
+    "search_input": "input[type='search']",
+    "search_button": "button[type='submit']",
+    "product_listings": "[data-testid='item-list'] > div",
+    "product_item": {
+      "id": "a[href*='item/']",
+      "title": "span[data-testid='item-title']",
+      "price": "span[data-testid='item-price']",
+      "image": "img[alt*='商品画像']",
+      "url": "a[href*='item/']"
+    },
+    "load_more_button": "button[data-testid='load-more']",
+    "no_results": "[data-testid='no-results']",
+    "pagination": "nav[aria-label='ページネーション']"
+  },
+  
+  "mercari_urls": {
+    "base_url": "https://www.mercari.jp",
+    "search_url": "https://www.mercari.jp/search/",
+    "category_url": "https://www.mercari.jp/category/"
+  },
+  
+  "timing": {
+    "search_delay": 3,
+    "page_transition_delay": 2,
+    "retry_delay": 5,
+    "max_retries": 3
+  },
+  
+  "filtering": {
+    "min_price_jpy": 100,
+    "max_price_jpy": 50000,
+    "exclude_keywords": [],
+    "background_filter_enabled": false,
+    "background_color_threshold": 240,
+    "max_solid_color_ratio": 0.7
+  },
+  
+  "notifications": {
+    "rate_limit_delay": 1,
+    "max_images_per_notification": 5
+  },
+  
+  "storage": {
+    "max_products_to_remember": 1000,
+    "cleanup_after_days": 7
+  }
+}

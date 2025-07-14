@@ -1,0 +1,15 @@
+.env
+.env.local
+.env.*
+logs/
+screenshots/
+*.pyc
+__pycache__/
+*.log
+mercari_known_products.json
+mercari_known_products.backup.json
+venv/
+.venv/
+.DS_Store
+.idea/
+.vscode/

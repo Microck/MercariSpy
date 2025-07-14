@@ -1,0 +1,23 @@
+# Core dependencies
+selenium==4.18.1
+undetected-chromedriver==3.5.3
+requests==2.31.0
+python-dotenv==1.0.0
+
+# HTML parsing
+beautifulsoup4==4.12.2
+lxml==4.9.3
+
+# Image processing
+Pillow==10.1.0
+numpy==1.24.3
+
+# Currency conversion
+forex-python==1.6
+
+# Structured logging
+python-json-logger==2.0.7
+
+# Utilities
+schedule==1.2.0
+pytz==2023.3
