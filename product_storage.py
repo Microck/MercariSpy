@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.9
 import json
 import os
 from datetime import datetime, timedelta

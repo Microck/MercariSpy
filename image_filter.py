@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.9
 import requests
 import numpy as np
 from PIL import Image

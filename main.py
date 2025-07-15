@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.9
 """
 Mercari.jp Monitoring Tool
 Main orchestrator for automated product monitoring and notification system.
