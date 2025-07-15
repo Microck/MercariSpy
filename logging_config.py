@@ -1,3 +1,4 @@
+#!/usr/bin/env python3.9
 import logging
 import json
 import os
@@ -7,7 +8,7 @@ from logging.handlers import RotatingFileHandler
 
 
 class StructuredLogger:
-    ""
+    """
     Structured JSON logger for the Mercari monitoring tool.
     Provides both console and file logging with rotation.
     """

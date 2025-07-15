@@ -5,6 +5,8 @@
 
 A sophisticated Python-based monitoring system for tracking new product listings on Mercari.jp with instant Telegram notifications, anti-bot detection bypass, and intelligent image filtering.
 
+> **⚠️ Python 3.9 Migration**: This project has been updated to use Python 3.9. See [PYTHON39_MIGRATION.md](PYTHON39_MIGRATION.md) for migration instructions.
+
 ## Features
 
 - Real-time Monitoring: Tracks new Mercari listings based on configurable search queries
@@ -44,8 +46,34 @@ mkdir -p Projects/mercari_monitor
 cd Projects/mercari_monitor
 ```
 
-### 2. Install Dependencies
+### 2. Install Python 3.9
+**Ubuntu/Debian:**
 ```bash
+sudo apt update
+sudo apt install python3.9 python3.9-venv python3.9-pip -y
+```
+
+**macOS:**
+```bash
+brew install python@3.9
+```
+
+**Using pyenv (cross-platform):**
+```bash
+curl https://pyenv.run | bash
+pyenv install 3.9.19
+pyenv local 3.9.19
+```
+
+### 3. Create Virtual Environment
+```bash
+python3.9 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+### 4. Install Dependencies
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
@@ -157,6 +185,34 @@ jq . logs/mercari_monitor.json  # Pretty print
 
 ## Troubleshooting
 
+### Python 3.9 Installation Issues
+
+#### Python 3.9 Not Found
+```bash
+# Install Python 3.9 using our setup script
+./setup_python39.sh
+
+# Or manually install:
+# Ubuntu/Debian: sudo apt install python3.9 python3.9-venv python3.9-pip
+# macOS: brew install python@3.9
+# Using pyenv: pyenv install 3.9.19 && pyenv local 3.9.19
+```
+
+#### Virtual Environment Issues
+```bash
+# Remove old environment and recreate
+rm -rf venv test_env
+python3.9 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+#### Dependency Compatibility Test
+```bash
+# Run compatibility check
+python test_python39_compatibility.py
+```
+
 ### Common Issues
 
 #### Bot Authorization Failed
@@ -175,6 +231,16 @@ cat .env
 #### Rate Limiting
 - Telegram: ~30 messages/minute
 - Mercari: Built-in delays prevent blocking
+
+#### Python Version Mismatch
+```bash
+# Check current Python version
+python --version
+
+# If not 3.9, reactivate environment
+source venv/bin/activate
+python --version
+```
 
 ### Debug Screenshots
 Error screenshots saved to `screenshots/` folder:
