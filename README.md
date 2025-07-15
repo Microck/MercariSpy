@@ -1,4 +1,7 @@
-# Mercari.jp Monitoring Tool
+# 🇯🇵 MercariSpy 🕵️
+## Mercari Product Monitor Bot
+
+[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 
 A sophisticated Python-based monitoring system for tracking new product listings on Mercari.jp with instant Telegram notifications, anti-bot detection bypass, and intelligent image filtering.
 
