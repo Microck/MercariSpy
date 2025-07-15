@@ -5,8 +5,6 @@
 
 A sophisticated Python-based monitoring system for tracking new product listings on Mercari.jp with instant Telegram notifications, anti-bot detection bypass, and intelligent image filtering.
 
-> **⚠️ Python 3.9 Migration**: This project has been updated to use Python 3.9. See [PYTHON39_MIGRATION.md](PYTHON39_MIGRATION.md) for migration instructions.
-
 ## Features
 
 - Real-time Monitoring: Tracks new Mercari listings based on configurable search queries
@@ -85,8 +83,6 @@ Copy `.env.example` to `.env` and fill in your values:
 TELEGRAM_BOT_TOKEN=your_bot_token_from_botfather
 TELEGRAM_CHAT_ID=your_telegram_chat_id
 
-# Optional Exchange Rate API
-EXCHANGE_RATE_API_KEY=your_api_key_here
 ```
 
 ### 4. Setup Telegram Bot
