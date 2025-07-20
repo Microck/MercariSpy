@@ -1,6 +1,9 @@
 #!/usr/bin/env python3.9
+"""
+Manages persistent storage of known products to prevent duplicate notifications.
+"""
+
 import json
-import os
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -10,200 +13,170 @@ from logging_config import get_logger
 
 class ProductStorage:
     """
-    Manages persistent storage of known products to prevent duplicate notifications.
-    Uses JSON file-based storage with automatic cleanup of old entries.
+    Manages a persistent JSON database of products to track seen items.
+
+    This class handles loading from and saving to a file, but crucially,
+    it does not save on every modification. The calling class should explicitly
+    call `save_products()` to persist changes to disk after a batch of
+    operations is complete to ensure good performance.
     """
-    
-    def __init__(self, storage_path: str = "mercari_known_products.json"):
+
+    def __init__(
+        self,
+        storage_path: str = "mercari_known_products.json",
+        max_storage_days: int = 7,
+    ):
+        """
+        Initializes the ProductStorage.
+
+        Args:
+            storage_path: The path to the JSON file for storage.
+            max_storage_days: How long to keep product records before cleanup.
+        """
         self.storage_path = Path(storage_path)
         self.logger = get_logger("ProductStorage")
         self.products: Dict[str, dict] = {}
-        self.max_storage_days = 7
-        
-        self._load_existing_products()
-    
-    def _load_existing_products(self):
-        """Load existing products from storage file."""
+        self.max_storage_days = max_storage_days
+
+        self._load_from_disk()
+
+    def _load_from_disk(self):
+        """Loads existing products from the storage file into memory."""
+        if not self.storage_path.exists():
+            # MODIFIED: Switched to structured logging format
+            self.logger.info(
+                "No existing product storage file found. A new one will be created on save.",
+                path=str(self.storage_path),
+            )
+            return
+
         try:
-            if self.storage_path.exists():
-                with open(self.storage_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    self.products = data.get('products', {})
-                    self.logger.info(f"Loaded {len(self.products)} known products")
-            else:
-                self.logger.info("No existing product storage found")
-                self._create_empty_storage()
-                
-        except Exception as e:
-            self.logger.error(f"Failed to load product storage: {e}")
+            with open(self.storage_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+                self.products = data.get("products", {})
+                # MODIFIED: Switched to structured logging format
+                self.logger.info(
+                    "Loaded known products",
+                    count=len(self.products),
+                    path=str(self.storage_path),
+                )
+        except (IOError, json.JSONDecodeError) as e:
+            # MODIFIED: Switched to structured logging format
+            self.logger.error(
+                "Failed to load product storage file. Starting with empty database.",
+                error=e,
+            )
             self.products = {}
-    
-    def _create_empty_storage(self):
-        """Create empty storage file."""
-        self.save_to_file()
-    
-    def add_product(self, product: dict) -> bool:
+
+    def add_product(self, product: dict):
         """
-        Add a product to known products.
-        
+        Adds a product to the in-memory storage. Does NOT save to disk.
+
         Args:
-            product: Product dictionary with 'id', 'title', 'price', etc.
-        
-        Returns:
-            bool: True if product was added, False if already exists
+            product: Product dictionary containing at least an 'id'.
         """
-        product_id = str(product['id'])
-        
+        product_id = str(product["id"])
         if product_id in self.products:
-            return False
-        
+            return  # Product already exists
+
         self.products[product_id] = {
-            'id': product_id,
-            'title': product.get('title', ''),
-            'price': product.get('price', 0),
-            'url': product.get('url', ''),
-            'image_url': product.get('image_url', ''),
-            'added_at': datetime.now().isoformat(),
-            'last_seen': datetime.now().isoformat()
+            "id": product_id,
+            "title": product.get("title", ""),
+            "price": product.get("price", 0),
+            "url": product.get("url", ""),
+            "image_url": product.get("image_url", ""),
+            "added_at": datetime.now().isoformat(),
         }
-        
-        self.save_to_file()
-        return True
-    
+        # MODIFIED: Switched to structured logging format
+        self.logger.debug(
+            "Added product to in-memory store", product_id=product_id
+        )
+
     def is_product_known(self, product_id: str) -> bool:
-        """Check if a product is already known."""
+        """Checks if a product ID is in the in-memory storage."""
         return str(product_id) in self.products
-    
-    def get_product_info(self, product_id: str) -> Optional[dict]:
-        """Get information about a known product."""
-        return self.products.get(str(product_id))
-    
-    def get_all_products(self) -> List[dict]:
-        """Get all known products."""
-        return list(self.products.values())
-    
-    def get_recent_products(self, hours: int = 24) -> List[dict]:
-        """Get products added in the last N hours."""
-        cutoff = datetime.now() - timedelta(hours=hours)
-        recent = []
-        
-        for product in self.products.values():
-            try:
-                added_time = datetime.fromisoformat(product['added_at'])
-                if added_time > cutoff:
-                    recent.append(product)
-            except ValueError:
-                continue
-        
-        return recent
-    
-    def get_products_count(self) -> dict:
-        """Get various counts of stored products."""
-        total = len(self.products)
-        
-        # Count products added in last 24 hours
-        recent_24h = self.get_recent_products(24)
-        recent_7d = self.get_recent_products(24 * 7)
-        
-        return {
-            'total': total,
-            'last_24h': len(recent_24h),
-            'last_7d': len(recent_7d)
-        }
-    
-    def cleanup_old_products(self, max_days: Optional[int] = None) -> int:
+
+    def cleanup_old_products(self) -> int:
         """
-        Remove old products from storage.
-        
-        Args:
-            max_days: Maximum days to keep products. Defaults to 7.
-        
+        Removes old products from the in-memory storage. Does NOT save to disk.
+
         Returns:
-            int: Number of products removed
+            The number of products removed.
         """
-        if max_days is None:
-            max_days = self.max_storage_days
-        
-        cutoff = datetime.now() - timedelta(days=max_days)
-        removed_count = 0
-        
-        products_to_remove = []
-        
-        for product_id, product in self.products.items():
+        cutoff = datetime.now() - timedelta(days=self.max_storage_days)
+        initial_count = len(self.products)
+
+        products_to_keep = {}
+        for product_id, product_data in self.products.items():
             try:
-                added_time = datetime.fromisoformat(product['added_at'])
-                if added_time < cutoff:
-                    products_to_remove.append(product_id)
-            except ValueError:
-                # If date parsing fails, consider it old
-                products_to_remove.append(product_id)
-        
-        # Remove old products
-        for product_id in products_to_remove:
-            del self.products[product_id]
-            removed_count += 1
-        
+                added_time = datetime.fromisoformat(product_data["added_at"])
+                if added_time >= cutoff:
+                    products_to_keep[product_id] = product_data
+            except (ValueError, KeyError):
+                continue
+
+        removed_count = initial_count - len(products_to_keep)
         if removed_count > 0:
-            self.save_to_file()
-            self.logger.info(f"Removed {removed_count} old products")
-        
+            self.products = products_to_keep
+            # MODIFIED: Switched to structured logging format
+            self.logger.info(
+                "Cleaned up old products from memory", count=removed_count
+            )
+
         return removed_count
-    
-    def save_to_file(self):
-        """Save products to storage file."""
+
+    def save_products(self):
+        """
+        Saves the current state of the in-memory product database to the JSON file.
+        """
+        backup_path = self.storage_path.with_suffix(".backup.json")
         try:
-            data = {
-                'products': self.products,
-                'last_updated': datetime.now().isoformat(),
-                'total_count': len(self.products)
+            data_to_save = {
+                "metadata": {
+                    "last_updated": datetime.now().isoformat(),
+                    "total_count": len(self.products),
+                },
+                "products": self.products,
             }
-            
-            # Create backup of existing file
+
             if self.storage_path.exists():
-                backup_path = self.storage_path.with_suffix('.backup.json')
                 self.storage_path.rename(backup_path)
-            
-            with open(self.storage_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
-            
-            # Remove backup if save successful
-            backup_path = self.storage_path.with_suffix('.backup.json')
+
+            with open(self.storage_path, "w", encoding="utf-8") as f:
+                json.dump(data_to_save, f, indent=2, ensure_ascii=False)
+
             if backup_path.exists():
                 backup_path.unlink()
-                
-            self.logger.debug(f"Saved {len(self.products)} products to storage")
-            
-        except Exception as e:
-            self.logger.error(f"Failed to save product storage: {e}")
-            # Restore backup
-            backup_path = self.storage_path.with_suffix('.backup.json')
-            if backup_path.exists():
+
+            # MODIFIED: Switched to structured logging format
+            self.logger.info(
+                "Successfully saved products",
+                count=len(self.products),
+                path=str(self.storage_path),
+            )
+
+        except (IOError, TypeError) as e:
+            # MODIFIED: Switched to structured logging format
+            self.logger.error("Failed to save product storage", error=e)
+            if backup_path.exists() and not self.storage_path.exists():
                 backup_path.rename(self.storage_path)
+                self.logger.warning("Restored database from backup.")
             raise
-    
-    def clear_all_products(self) -> bool:
-        """
-        Clear all stored products (use with caution).
-        
-        Returns:
-            bool: True if successful
-        """
-        try:
-            old_count = len(self.products)
-            self.products.clear()
-            self.save_to_file()
-            self.logger.warning(f"Cleared all products ({old_count} removed)")
-            return True
-            
-        except Exception as e:
-            self.logger.error(f"Failed to clear products: {e}")
-            return False
-    
+
     def get_storage_stats(self) -> dict:
-        """Get storage statistics for monitoring."""
+        """Gets statistics about the current storage state."""
+        try:
+            file_size = (
+                self.storage_path.stat().st_size
+                if self.storage_path.exists()
+                else 0
+            )
+        except FileNotFoundError:
+            file_size = 0
+
         return {
-            'file_exists': self.storage_path.exists(),
-            'file_size_bytes': self.storage_path.stat().st_size if self.storage_path.exists() else 0,
-            **self.get_products_count(),
-            'last_updated': datetime.now().isoformat()
+            "total_products": len(self.products),
+            "file_path": str(self.storage_path),
+            "file_size_bytes": file_size,
+            "max_storage_days": self.max_storage_days,
         }

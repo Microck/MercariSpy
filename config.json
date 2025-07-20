@@ -43,8 +43,8 @@
     "max_price_jpy": 50000,
     "exclude_keywords": [],
     "background_filter_enabled": false,
-    "background_color_threshold": 240,
-    "max_solid_color_ratio": 0.7
+    "background_color_threshold": 254,
+    "max_solid_color_ratio": 0.30
   },
   
   "notifications": {
