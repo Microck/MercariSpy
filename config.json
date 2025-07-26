@@ -10,48 +10,43 @@
       "--disable-blink-features=AutomationControlled"
     ]
   },
-  
   "selectors": {
-  "product_listings": "li[data-testid='item-cell']",
-  "product_item": {
-    "id": "a[data-testid='thumbnail-link']",
-    "title": "span[data-testid='thumbnail-item-name']",
-    "price": "div[class*='priceContainer']",
-    "image": "img",
-    "url": "a[data-testid='thumbnail-link']"
+    "listings_container": "li[data-testid='item-cell']",
+    "product_listings": "li[data-testid='item-cell']",
+    "product_item": {
+      "id": "a[data-testid='thumbnail-link']",
+      "title": "span[data-testid='thumbnail-item-name']",
+      "price": "[data-testid='price']",
+      "image": "img",
+      "url": "a[data-testid='thumbnail-link']"
+    },
+    "load_more_button": "button[data-testid='load-more']",
+    "no_results": "[data-testid='no-results']",
+    "pagination": "nav[aria-label='ページネーション']"
   },
-  "load_more_button": "button[data-testid='load-more']",
-  "no_results": "[data-testid='no-results']",
-  "pagination": "nav[aria-label='ページネーション']"
-},
-  
   "mercari_urls": {
     "base_url": "https://jp.mercari.com",
     "search_url": "https://jp.mercari.com/search/",
     "category_url": "https://jp.mercari.com/category/"
   },
-  
   "timing": {
     "search_delay": 3,
     "page_transition_delay": 2,
     "retry_delay": 5,
     "max_retries": 3
   },
-  
   "filtering": {
     "min_price_jpy": 100,
     "max_price_jpy": 50000,
     "exclude_keywords": [],
     "background_filter_enabled": false,
     "background_color_threshold": 254,
-    "max_solid_color_ratio": 0.30
+    "max_solid_color_ratio": 0.3
   },
-  
   "notifications": {
     "rate_limit_delay": 1,
     "max_images_per_notification": 5
   },
-  
   "storage": {
     "max_products_to_remember": 1000,
     "cleanup_after_days": 7
